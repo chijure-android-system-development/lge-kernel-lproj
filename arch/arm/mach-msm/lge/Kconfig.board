@@ -5,6 +5,9 @@
 # LGE V3 Model
 source "arch/arm/mach-msm/lge/vee3/Kconfig"
 
+# LGE E0 Model (Optimus L3 E400)
+source "arch/arm/mach-msm/lge/e0/Kconfig"
+
 # LGE V7 Model
 source "arch/arm/mach-msm/lge/vee7/Kconfig"
 

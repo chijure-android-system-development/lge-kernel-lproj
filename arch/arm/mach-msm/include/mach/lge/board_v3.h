@@ -88,8 +88,13 @@ struct gpio_i2c_pin {
 
 /*LGE_CHANGE_S : seven.kim@lge.com for V7 */
 #if defined (CONFIG_MACH_MSM8X25_V7)
+#if defined (CONFIG_MACH_MSM7X25A_E0)
+#include <mach/lge/board_e0.h>
+#endif
+#ifndef SENSOR_GPIO_I2C_SCL
 #define SENSOR_GPIO_I2C_SCL		13
 #define SENSOR_GPIO_I2C_SDA		35
+#endif
 
 /* accelerometer */
 #define ACCEL_GPIO_INT			94	/* motion interrupt 1*/
@@ -146,7 +151,9 @@ struct gpio_i2c_pin {
 /* BOSCH Ecompass : Bosch compass+accelerometer are internally use two sensor */
 #define ECOM_GPIO_I2C_SCL		SENSOR_GPIO_I2C_SCL
 #define ECOM_GPIO_I2C_SDA		SENSOR_GPIO_I2C_SDA
+#ifndef ECOM_GPIO_INT
 #define ECOM_GPIO_INT			130 /* motion interrupt 2*/
+#endif
 #if defined (CONFIG_SENSORS_BMA2X2)
 /*#LGE_CHANGE : 2012-10-24 Sanghun,Lee(eee3114.@lge.com) sensor change from bmc150 to bmc050
 */

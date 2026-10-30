@@ -1,0 +1,16 @@
+# LGE E0 Model (Optimus L3, E400)
+#
+# The E400 shares most of its peripherals with the V3 board (L3 II), so E0 is
+# a V3-family target: it selects MACH_MSM7X25A_V3 for the shared drivers and
+# vee3 board files, and only replaces the board files that differ (see Makefile).
+
+config MACH_MSM7X25A_E0
+	depends on ARCH_MSM7X27A
+	depends on !MSM_STACKED_MEMORY
+	select MACH_LGE
+	select MACH_MSM7X25A_V3
+	bool "MSM7x25A E0 (LG Optimus L3 E400)"
+	help
+	  Support for the LG Optimus L3 (E400). Builds the board files in this
+	  directory instead of the vee3 ones for the machine description, audio
+	  endpoints and input/LED wiring.

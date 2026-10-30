@@ -5,6 +5,7 @@
 # LGE V3 Model
 ifndef CONFIG_MACH_MSM7X25A_M4
 obj-$(CONFIG_MACH_MSM7X25A_V3) += vee3/
+obj-$(CONFIG_MACH_MSM7X25A_E0) += e0/
 endif
 
 # LGE V7 Model 
