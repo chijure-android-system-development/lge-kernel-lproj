@@ -564,6 +564,11 @@ static int firmware_update(struct mcs8000_ts_device *ts)
 	{
 		mcs8000_firmware_info(&fw_ver, &hw_ver, &comp_ver);
 		printk(KERN_INFO "Firmware ver : [%d],HW ver : [%d] \n", fw_ver, hw_ver);
+#ifdef CONFIG_MACH_MSM7X25A_E0
+		/* E400: embedded fw is the L3 II image and the version reads
+		 * back 0 here; never auto-flash the touch IC. */
+		return ret;
+#endif
 
 		/* 2012-10-23 JongWook-Park(blood9874@lge.com) [V3] Single Touch Bring Up [START] */
 		#if defined(CONFIG_MACH_MSM7X25A_V3_DS) || defined(CONFIG_MACH_MSM7X25A_V1)
@@ -1184,7 +1189,25 @@ static void mcs8000_work(struct work_struct *work)
 				#endif
 				/* 2012-10-08 JongWook-Park(blood9874@lge.com) [V3] Melfas mms-128s TSD patch [END] */
 
-				#if defined(CONFIG_MACH_MSM7X25A_V3_DS) || defined(CONFIG_MACH_MSM7X25A_V1)
+				#if defined(CONFIG_MACH_MSM7X25A_E0)
+		/* E400 (2.6.38 mcs8000_ts.c): 1=MENU 2=HOME 3=BACK 4=SEARCH */
+		switch (keyID) {
+		case 0x1:
+			input_report_key(ts->input_dev, KEY_MENU, touchState ? PRESS_KEY : RELEASE_KEY);
+			break;
+		case 0x2:
+			input_report_key(ts->input_dev, KEY_HOME, touchState ? PRESS_KEY : RELEASE_KEY);
+			break;
+		case 0x3:
+			input_report_key(ts->input_dev, KEY_BACK, touchState ? PRESS_KEY : RELEASE_KEY);
+			break;
+		case 0x4:
+			input_report_key(ts->input_dev, KEY_SEARCH, touchState ? PRESS_KEY : RELEASE_KEY);
+			break;
+		default:
+			break;
+		}
+#elif defined(CONFIG_MACH_MSM7X25A_V3_DS) || defined(CONFIG_MACH_MSM7X25A_V1)
 				/* 2012-09-25 JongWook-Park(blood9874@lge.com) [V3] Bring up V3 mms-128s touch [START] */ 
 				switch(keyID)
 				{
@@ -2001,13 +2024,21 @@ static int __devinit mcs8000_ts_init(void)
 #if defined(CONFIG_MACH_MSM7X25A_V3_DS)    
     mcs8000_ts_input->keybit[BIT_WORD(KEY_SIM_SWITCH)] |= BIT_MASK(KEY_SIM_SWITCH);
 #endif
-	#else
+ #else
+#if defined(CONFIG_MACH_MSM7X25A_E0)
+	/* E400: MENU, HOME, BACK, SEARCH (touch_mcs8000.kl) */
+	mcs8000_ts_input->keybit[BIT_WORD(KEY_BACK)] |= BIT_MASK(KEY_BACK);
+	mcs8000_ts_input->keybit[BIT_WORD(KEY_MENU)] |= BIT_MASK(KEY_MENU);
+	mcs8000_ts_input->keybit[BIT_WORD(KEY_HOME)] |= BIT_MASK(KEY_HOME);
+	mcs8000_ts_input->keybit[BIT_WORD(KEY_SEARCH)] |= BIT_MASK(KEY_SEARCH);
+#else
 		mcs8000_ts_input->keybit[BIT_WORD(KEY_BACK)] |= BIT_MASK(KEY_BACK);
 		mcs8000_ts_input->keybit[BIT_WORD(KEY_MENU)] |= BIT_MASK(KEY_MENU);
 #if defined(CONFIG_MACH_MSM7X25A_V3_DS) || defined(CONFIG_MACH_MSM7X25A_V1)
 		mcs8000_ts_input->keybit[BIT_WORD(KEY_HOMEPAGE)] |= BIT_MASK(KEY_HOMEPAGE);
 		mcs8000_ts_input->keybit[BIT_WORD(KEY_SIM_SWITCH)] |= BIT_MASK(KEY_SIM_SWITCH);
 #endif
+#endif /* CONFIG_MACH_MSM7X25A_E0 */
 	#endif	
 	/* 2012-10-23 JongWook-Park(blood9874@lge.com) [V3] Single Touch Bring Up [END] */ 
 

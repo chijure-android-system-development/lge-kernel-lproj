@@ -26,7 +26,7 @@ static void msm_keypad_bl_led_set(struct led_classdev *led_cdev,
 	enum led_brightness value)
 {
 	
-#if defined(CONFIG_MACH_MSM7X27A_U0) || defined (CONFIG_MACH_MSM7X25A_M4)
+#if defined(CONFIG_MACH_MSM7X27A_U0) || defined (CONFIG_MACH_MSM7X25A_M4) || defined(CONFIG_MACH_MSM7X25A_E0)
 	int on_off;
 	int brightness;
 
@@ -39,6 +39,8 @@ static void msm_keypad_bl_led_set(struct led_classdev *led_cdev,
 
 #if defined (CONFIG_MACH_MSM7X25A_M4)
 	brightness = PM_MPP__I_SINK__LEVEL_10mA;
+#elif defined (CONFIG_MACH_MSM7X25A_E0)
+	brightness = PM_MPP__I_SINK__LEVEL_15mA; /* same level as the 2.6.38 E0 driver */
 #else
 	brightness = PM_MPP__I_SINK__LEVEL_5mA;
 #endif	
@@ -102,7 +104,7 @@ static void msm_keypad_bl_led_set(struct led_classdev *led_cdev,
 }
 
 static struct led_classdev msm_kp_bl_led = {
-#if defined(CONFIG_MACH_MSM7X27A_U0) || defined (CONFIG_MACH_MSM7X25A_M4)
+#if defined(CONFIG_MACH_MSM7X27A_U0) || defined (CONFIG_MACH_MSM7X25A_M4) || defined(CONFIG_MACH_MSM7X25A_E0)
 	.name			= "button-backlight",
 #else
 	.name			= "keyboard-backlight",

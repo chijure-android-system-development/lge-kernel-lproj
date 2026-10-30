@@ -28,7 +28,9 @@
 
 #define MODULE_NAME  "bu61800bl"
 #define CONFIG_BACKLIGHT_LEDS_CLASS
+#ifndef CONFIG_MACH_MSM7X25A_E0 /* E400 button LEDs are on PMIC MPP3 (leds-msm-pmic) */
 #define USE_BUTTON_BACKLIGHT
+#endif
 
 #ifdef CONFIG_BACKLIGHT_LEDS_CLASS
 #include <linux/leds.h>
