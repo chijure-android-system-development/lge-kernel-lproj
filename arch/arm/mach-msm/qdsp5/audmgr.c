@@ -68,9 +68,15 @@ static void audmgr_rpc_connect(struct audmgr_global *amg)
 		MM_DBG("connect failed with current VERS"\
 				"= %x, trying again with  Cad API\n",
 				AUDMGR_VERS_COMP_VER3);
+#ifdef CONFIG_MACH_MSM7X25A_E0
+		/* The E400's modem is older: 2.6.38 went VER3 -> VER2 and never
+		 * used the CAD (VER4) message format, which resets the modem. */
+		amg->ept = ERR_PTR(-ENODEV);
+#else
 		amg->ept = msm_rpc_connect_compatible(AUDMGR_PROG,
 				AUDMGR_VERS_COMP_VER4,
 				MSM_RPC_UNINTERRUPTIBLE);
+#endif
 		if (IS_ERR(amg->ept)) {
 			amg->ept = msm_rpc_connect_compatible(AUDMGR_PROG,
 					AUDMGR_VERS_COMP_VER2,
@@ -106,6 +112,9 @@ static void audmgr_rpc_connect(struct audmgr_global *amg)
 	if (IS_ERR(amg->ept)) {
 		amg->ept = NULL;
 		MM_ERR("failed to connect to audmgr svc\n");
+	} else {
+		pr_info("audmgr: connected, rpc version 0x%08x cad=%d\n",
+			amg->rpc_version, amg->cad);
 	}
 
 	return;
