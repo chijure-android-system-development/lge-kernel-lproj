@@ -983,8 +983,13 @@ static int ioctl_standard_call(struct net_device *	dev,
 	/* Check if we have a pointer to user space data or not */
 	if (descr->header_type != IW_HEADER_TYPE_POINT) {
 
-		/* No extra arguments. Trivial to handle */
-		ret = handler(dev, info, &(iwr->u), NULL);
+		/* No extra arguments. Trivial to handle.
+		 * Android private commands (SIOCSIWPRIV) are answered by the
+		 * Libra WLAN driver straight into the caller's buffer, so hand
+		 * it the user pointer instead of NULL (mainline passes NULL). */
+		ret = handler(dev, info, &(iwr->u),
+			      cmd == SIOCSIWPRIV ?
+			      (char *)iwr->u.data.pointer : NULL);
 
 		/* Generate an event to notify listeners of the change */
 		if ((descr->flags & IW_DESCR_FLAG_EVENT) &&
