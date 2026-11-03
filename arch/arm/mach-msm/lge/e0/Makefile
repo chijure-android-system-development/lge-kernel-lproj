@@ -6,3 +6,4 @@ EXTRA_CFLAGS += -Iarch/arm/mach-msm -Iarch/arm/tools
 obj-$(CONFIG_MACH_MSM7X25A_E0) += board-msm7x27a_e0.o
 obj-$(CONFIG_MACH_MSM7X25A_E0) += board-msm7x27a-sound_e0.o
 obj-$(CONFIG_MACH_MSM7X25A_E0) += board-msm7627a-io_e0.o
+obj-$(CONFIG_MACH_MSM7X25A_E0) += rpc_misc_e0.o

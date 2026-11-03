@@ -137,6 +137,19 @@ int msm_rpc_create_server2(struct msm_rpc_server *server)
 }
 EXPORT_SYMBOL(msm_rpc_create_server2);
 
+/* Write a pre-built reply on the servers endpoint. The router sends it to
+ * the client whose request was just read, as the handler of a server using
+ * the non-xdr rpc_call() path must do when it returns a value above zero. */
+int msm_rpc_server_write_raw_reply(const void *buf, int len)
+{
+	int rc = msm_rpc_write(endpoint, (void *)buf, len);
+
+	if (rc == -ENETRESET)
+		msm_rpc_clear_netreset(endpoint);
+	return rc;
+}
+EXPORT_SYMBOL(msm_rpc_server_write_raw_reply);
+
 static int rpc_send_accepted_void_reply(struct msm_rpc_endpoint *client,
 					uint32_t xid, uint32_t accept_status)
 {

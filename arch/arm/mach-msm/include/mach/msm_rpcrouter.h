@@ -219,6 +219,7 @@ struct msm_rpc_server
 
 int msm_rpc_create_server(struct msm_rpc_server *server);
 int msm_rpc_create_server2(struct msm_rpc_server *server);
+int msm_rpc_server_write_raw_reply(const void *buf, int len);
 
 #define MSM_RPC_MSGSIZE_MAX 8192
 
