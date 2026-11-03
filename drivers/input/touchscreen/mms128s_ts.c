@@ -1190,19 +1190,13 @@ static void mcs8000_work(struct work_struct *work)
 				/* 2012-10-08 JongWook-Park(blood9874@lge.com) [V3] Melfas mms-128s TSD patch [END] */
 
 				#if defined(CONFIG_MACH_MSM7X25A_E0)
-		/* E400 (2.6.38 mcs8000_ts.c): 1=MENU 2=HOME 3=BACK 4=SEARCH */
+		/* E400 has two touch keys (mcs8000_ts_mms128_e1.c): 1=MENU 2=BACK */
 		switch (keyID) {
 		case 0x1:
 			input_report_key(ts->input_dev, KEY_MENU, touchState ? PRESS_KEY : RELEASE_KEY);
 			break;
 		case 0x2:
-			input_report_key(ts->input_dev, KEY_HOME, touchState ? PRESS_KEY : RELEASE_KEY);
-			break;
-		case 0x3:
 			input_report_key(ts->input_dev, KEY_BACK, touchState ? PRESS_KEY : RELEASE_KEY);
-			break;
-		case 0x4:
-			input_report_key(ts->input_dev, KEY_SEARCH, touchState ? PRESS_KEY : RELEASE_KEY);
 			break;
 		default:
 			break;
