@@ -133,8 +133,12 @@ struct gpio_i2c_pin {
 #if defined (CONFIG_MACH_MSM7X25A_V3)
 #define GPIO_SD_DETECT_N 40
 
+#if defined (CONFIG_MACH_MSM7X25A_E0)
+#include <mach/lge/board_e0.h>
+#else
 #define SENSOR_GPIO_I2C_SCL		13
 #define SENSOR_GPIO_I2C_SDA		35
+#endif
 
 /* accelerometer */
 #define ACCEL_GPIO_INT			94	/* motion interrupt 1*/
