@@ -285,6 +285,23 @@ static int prox_power_onoff(unsigned char onoff)
  	return rc;
 }
 
+#ifdef CONFIG_MACH_MSM7X25A_E0
+/* The chip supply is a board regulator (LDO 1 of the BU61800 on the E400);
+ * the stock driver switched it through the platform data. */
+static void gp2ap_board_power(int on)
+{
+	struct proximity_platform_data *pd;
+
+	if (!gp2ap_pdev || !gp2ap_pdev->client)
+		return;
+	pd = gp2ap_pdev->client->dev.platform_data;
+	if (pd && pd->power)
+		pd->power(on);
+}
+#else
+static inline void gp2ap_board_power(int on) { }
+#endif
+
 static int
 gp2ap_device_initialise(void)
 {
@@ -800,6 +817,8 @@ gp2ap_i2c_probe(struct i2c_client *client, const struct i2c_device_id *id)
 
 	/* turn on power supply for GP2AP00200F */
 	//pdata->power(1);
+	gp2ap_board_power(1);
+	msleep(2);
 	prox_power_onoff(1);
 	udelay(120);
 
@@ -933,6 +952,7 @@ gp2ap_suspend(struct i2c_client *i2c_dev, pm_message_t state)
 	/* turn off power supply */
 	//pdata->power(0);
 	prox_power_onoff(0);
+	gp2ap_board_power(0);
 
 	irq_set_irq_wake(pdev->irq, 0);
 
@@ -969,6 +989,8 @@ gp2ap_resume(struct i2c_client *i2c_dev)
 
 	/* turn on power supply */
 	//pdata->power(1);
+	gp2ap_board_power(1);
+	msleep(2);
 	prox_power_onoff(1);
 
 	pdev->last_vout = -1;
@@ -989,6 +1011,7 @@ gp2ap_resume(struct i2c_client *i2c_dev)
 				PROXE("%s failed to write - addr:%d\n", __func__, addr);
 				//pdata->power(0);
 				prox_power_onoff(0);
+				gp2ap_board_power(0);
 				return -EIO;
 			}
 		} else

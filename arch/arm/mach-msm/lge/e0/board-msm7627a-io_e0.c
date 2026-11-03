@@ -679,6 +679,9 @@ static void __init v3_init_i2c_sensor(int bus_num)
 #if defined (CONFIG_SENSOR_APDS9190)
 extern int rt9396_ldo_enable(struct device *dev, unsigned num, unsigned enable);
 #endif
+#if defined (CONFIG_MACH_MSM7X25A_E0) && defined (CONFIG_BACKLIGHT_BU61800)
+extern int bu61800_ldo_enable(struct device *dev, unsigned num, unsigned enable);
+#endif
 
 
 /* proximity */
@@ -696,6 +699,10 @@ static int prox_power_set(unsigned char onoff)
 		printk(KERN_INFO "%s,***********Proximity probe enter when power on*****\n",__func__);
 	}
 
+#endif
+#if defined (CONFIG_MACH_MSM7X25A_E0) && defined (CONFIG_BACKLIGHT_BU61800)
+	/* The GP2AP supply is LDO 1 of the BU61800 backlight chip. */
+	bu61800_ldo_enable(NULL, 1, onoff ? 1 : 0);
 #endif
 	//Need to implement Power Control : PMIC L12 Block use
 	return 0;
@@ -1537,6 +1544,15 @@ void __init msm7627a_add_io_devices(void)
 #endif
 /* 2012-10-16 JongWook-Park(blood9874@lge.com) [V3] DIAG Touch Key patch [END] */
 
+	/* The stock ROM sensord opens .../i2c-gpio.4/i2c-4/4-0044/enable, so
+	 * the proximity bus has to be registered before the sensor bus. */
+	//eee3114.lee@lge.com sensor
+#if defined (CONFIG_MACH_MSM7X25A_V3)
+	lge_add_gpio_i2c_device(v3_init_i2c_prox);
+#else
+	lge_add_gpio_i2c_device(v3_init_i2c_prox);
+#endif	
+	
 #if defined (CONFIG_SENSORS_BMM050) ||defined(CONFIG_SENSORS_BMA250)
 #if defined (CONFIG_MACH_MSM7X25A_V3)
 	lge_add_gpio_i2c_device(v3_init_i2c_sensor);
@@ -1545,13 +1561,6 @@ void __init msm7627a_add_io_devices(void)
 #endif
 #endif
 
-	//eee3114.lee@lge.com sensor
-#if defined (CONFIG_MACH_MSM7X25A_V3)
-	lge_add_gpio_i2c_device(v3_init_i2c_prox);
-#else
-	lge_add_gpio_i2c_device(v3_init_i2c_prox);
-#endif	
-	
 /*[LGE_BSP_S][yunmo.yang@lge.com] LP5521 RGB Driver*/
 #ifdef CONFIG_LEDS_LP5521	
 	lge_add_gpio_i2c_device(lp5521_init_i2c_rgb);
